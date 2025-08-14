@@ -159,12 +159,9 @@ project/
 
 #### Additional Info
 
-Make sure you're using a supported version of python. The module is currently tested on these versions:
+Make sure you're using a supported version of Python. The module is currently tested on this version:
 
-- Python 3.7
-- Python 3.8
-- Python 3.9
-- Python 3.10
+- Python 3.12
 
 For more info, and ways to do more advanced things, check out our [getting started docs](https://docs.blankly.finance).
 
