@@ -35,7 +35,7 @@ setup(
         'alpaca-trade-api >= 3.2.0',
         'bokeh >= 3.7.3',
         'dateparser >= 1.2.2',
-        'tulipy >= 0.4.0',
+        'pandas-ta >= 0.3.14b0',
         'numpy >= 2.3.2',
         'pandas >= 2.3.1',
         'python-binance >= 1.0.29',

@@ -18,45 +18,51 @@
 
 from typing import Any
 
+import numpy as np
 import pandas as pd
-import tulipy as ti
 
-from blankly.indicators.utils import check_series, convert_to_numpy
+# pandas-ta relies on the deprecated numpy.NaN alias which was removed in
+# NumPy 2.0.  Create that alias before importing the library so that the
+# import works on modern NumPy versions.
+np.NaN = np.nan
+import pandas_ta as ta
+
+from blankly.indicators.utils import check_series
 
 
 def ema(data: Any, period: int = 50, use_series=False) -> Any:
     if check_series(data):
         use_series = True
-    data = convert_to_numpy(data)
-    ema = ti.ema(data, period=period)
-    return pd.Series(ema) if use_series else ema
+    series = pd.Series(data)
+    ema = ta.ema(series, length=period).dropna()
+    return ema if use_series else ema.to_numpy()
 
 
 def vwma(data: Any, volume_data: Any, period: int = 50, use_series=False) -> Any:
     if check_series(data):
         use_series = True
 
-    data = convert_to_numpy(data)
-    volume_data = convert_to_numpy(volume_data).astype(float)
+    price = pd.Series(data)
+    volume = pd.Series(volume_data).astype(float)
 
-    vwma = ti.vwma(data, volume_data, period=period)
-    return pd.Series(vwma) if use_series else vwma
+    vwma = ta.vwma(price, volume, length=period).dropna()
+    return vwma if use_series else vwma.to_numpy()
 
 
 def wma(data: Any, period: int = 50, use_series=False) -> Any:
     if check_series(data):
         use_series = True
-    data = convert_to_numpy(data)
-    wma = ti.wma(data, period)
-    return pd.Series(wma) if use_series else wma
+    series = pd.Series(data)
+    wma = ta.wma(series, length=period).dropna()
+    return wma if use_series else wma.to_numpy()
 
 
 def zlema(data: Any, period: int = 50, use_series=False) -> Any:
     if check_series(data):
         use_series = True
-    data = convert_to_numpy(data)
-    zlema = ti.zlema(data, period)
-    return pd.Series(zlema) if use_series else zlema
+    series = pd.Series(data)
+    zlema = ta.zlma(series, length=period).dropna()
+    return zlema if use_series else zlema.to_numpy()
 
 
 def sma(data: Any, period: int = 50, use_series=False) -> Any:
@@ -68,41 +74,50 @@ def sma(data: Any, period: int = 50, use_series=False) -> Any:
     """
     if check_series(data):
         use_series = True
-    data = convert_to_numpy(data)
-    sma = ti.sma(data, period=period)
-    return pd.Series(sma) if use_series else sma
+    series = pd.Series(data)
+    sma = ta.sma(series, length=period).dropna()
+    return sma if use_series else sma.to_numpy()
 
 
 def hma(data: Any, period: int = 50, use_series=False) -> Any:
     if check_series(data):
         use_series = True
-    data = convert_to_numpy(data)
-    hma = ti.hma(data, period)
-    return pd.Series(hma) if use_series else hma
+    series = pd.Series(data)
+    hma = ta.hma(series, length=period).dropna()
+    return hma if use_series else hma.to_numpy()
 
 
 def kaufman_adaptive_ma(data: Any, period: int = 50, use_series=False) -> Any:
     if check_series(data):
         use_series = True
-    data = convert_to_numpy(data)
-    kama = ti.kama(data, period)
-    return pd.Series(kama) if use_series else kama
+    series = pd.Series(data)
+    kama = ta.kama(series, length=period).dropna()
+    return kama if use_series else kama.to_numpy()
 
 
 def trima(data: Any, period: int = 50, use_series=False) -> Any:
     if check_series(data):
         use_series = True
-    data = convert_to_numpy(data)
-    trima = ti.trima(data, period)
-    return pd.Series(trima) if use_series else trima
+    series = pd.Series(data)
+    trima = ta.trima(series, length=period).dropna()
+    return trima if use_series else trima.to_numpy()
 
 
 def macd(data: Any, short_period: int = 12, long_period: int = 26, signal_period: int = 9, use_series=False) -> Any:
     if check_series(data):
         use_series = True
-    data = convert_to_numpy(data)
-    macd, macd_signal, macd_histogram = ti.macd(data, short_period, long_period, signal_period)
+    series = pd.Series(data)
+    df = ta.macd(series, fast=short_period, slow=long_period, signal=signal_period)
+    macd_col = f"MACD_{short_period}_{long_period}_{signal_period}"
+    macd_signal_col = f"MACDs_{short_period}_{long_period}_{signal_period}"
+    macd_hist_col = f"MACDh_{short_period}_{long_period}_{signal_period}"
+    macd = df[macd_col].dropna()
+    macd_signal = df[macd_signal_col].dropna()
+    macd_hist = df[macd_hist_col].dropna()
     if use_series:
-        df = pd.DataFrame({'macd': macd, 'macd_signal': macd_signal, 'macd_histogram': macd_histogram})
-        return df
-    return macd, macd_signal, macd_histogram
+        return pd.DataFrame({
+            'macd': macd,
+            'macd_signal': macd_signal,
+            'macd_histogram': macd_hist
+        })
+    return macd.to_numpy(), macd_signal.to_numpy(), macd_hist.to_numpy()
