@@ -1015,7 +1015,7 @@ class BackTestController(ABCBacktestController):  # circular import to type mode
                 if kwargs_ is None:
                     kwargs_ = {}
                 result = math_callable(dict_of_dataframes, **kwargs_)
-                if result == np.NAN:
+                if isinstance(result, (float, np.floating)) and np.isnan(result):
                     result = None
                 return result
             except (ZeroDivisionError, Exception) as e__:
