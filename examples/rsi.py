@@ -30,9 +30,8 @@ if __name__ == "__main__":
 
     # Use our strategy helper on Alpaca
     strategy = blankly.Strategy(exchange)
-
-    # Run the price event function every time we check for a new price - by default that is 15 seconds
-    strategy.add_price_event(price_event, symbol='BTCUSD', resolution='1d', init=init)
+    # Run the price event function for the SPY ETF each time we check for a new price
+    strategy.add_price_event(price_event, symbol='SPY', resolution='1d', init=init)
 
     # Start the strategy. This will begin each of the price event ticks
     # strategy.start()
